@@ -1,0 +1,50 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Customers — PharmaFlow{% endblock %}
+{% block page_title %}Customers{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'customer_add' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Add Customer</a>
+{% endblock %}
+
+{% block content %}
+<form method="GET" class="mb-3 d-flex gap-2" style="max-width:360px;">
+  <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search customers…">
+  <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+  {% if q %}<a href="{% url 'customer_list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>{% endif %}
+</form>
+
+<div class="table-wrapper">
+  <div class="card-header">
+    <span style="font-weight:600;">{{ customers.count }} customer{{ customers.count|pluralize }}</span>
+  </div>
+  {% if customers %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Sales</th><th>Since</th><th style="text-align:right;">Actions</th></tr></thead>
+      <tbody>
+        {% for c in customers %}
+        <tr>
+          <td class="fw-500">{{ c.name }}</td>
+          <td style="color:var(--slate);">{{ c.phone|default:"—" }}</td>
+          <td style="color:var(--slate);">{{ c.email|default:"—" }}</td>
+          <td><span class="badge badge-teal">{{ c.sale_count }}</span></td>
+          <td style="color:var(--muted);">{{ c.created|date:"M Y" }}</td>
+          <td style="text-align:right;">
+            <div class="d-flex gap-1 justify-content-end">
+              <a href="{% url 'customer_edit'   c.pk %}" class="action-btn action-edit"   data-tooltip="Edit"><i class="bi bi-pencil"></i></a>
+              <a href="{% url 'customer_delete' c.pk %}" class="action-btn action-delete" data-tooltip="Delete"><i class="bi bi-trash"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon"><i class="bi bi-people"></i></div>
+    <p>No customers yet. <a href="{% url 'customer_add' %}">Add your first one.</a></p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

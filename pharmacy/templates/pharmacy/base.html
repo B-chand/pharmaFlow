@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}PharmaFlow{% endblock %}</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <!-- Custom styles -->
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'pharmacy/css/style.css' %}"/>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<div class="app-wrapper">
+
+  <!-- ══════════════════ SIDEBAR ══════════════════ -->
+  <nav class="sidebar" id="sidebar">
+
+    <!-- Brand -->
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="bi bi-capsule-pill"></i></div>
+      <div>
+        <div class="brand-name">PharmaFlow</div>
+        <div class="brand-tag">Management System</div>
+      </div>
+    </div>
+
+    <!-- Nav Links -->
+    <div class="sidebar-nav">
+
+      <div class="nav-section-label">Overview</div>
+      <a class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
+        <span class="nav-icon"><i class="bi bi-grid-1x2"></i></span> Dashboard
+      </a>
+
+      <div class="nav-section-label mt-2">Inventory</div>
+      <a class="nav-item {% if 'medicine' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'medicine_list' %}">
+        <span class="nav-icon"><i class="bi bi-capsule"></i></span> Medicines
+      </a>
+      <a class="nav-item {% if 'supplier' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'supplier_list' %}">
+        <span class="nav-icon"><i class="bi bi-building"></i></span> Suppliers
+      </a>
+      <a class="nav-item {% if 'customer' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'customer_list' %}">
+        <span class="nav-icon"><i class="bi bi-people"></i></span> Customers
+      </a>
+
+      <div class="nav-section-label mt-2">Transactions</div>
+      <a class="nav-item {% if 'purchase' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'purchase_list' %}">
+        <span class="nav-icon"><i class="bi bi-box-arrow-in-down-right"></i></span> Purchases
+      </a>
+      <a class="nav-item {% if 'sale' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'sale_list' %}">
+        <span class="nav-icon"><i class="bi bi-receipt"></i></span> Sales
+      </a>
+
+      <div class="nav-section-label mt-2">More</div>
+      <a class="nav-item {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">
+        <span class="nav-icon"><i class="bi bi-envelope"></i></span> Contact
+      </a>
+      <a class="nav-item" href="/admin/" target="_blank">
+        <span class="nav-icon"><i class="bi bi-shield-lock"></i></span> Admin Panel
+        <i class="bi bi-box-arrow-up-right ms-auto" style="font-size:.65rem;opacity:.5;"></i>
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar">{{ request.user.username|first|upper }}</div>
+        <div>
+          <div style="color:rgba(255,255,255,.85); font-weight:500;">{{ request.user.username }}</div>
+          <a href="{% url 'logout' %}" style="color:var(--muted); font-size:.75rem;">
+            <i class="bi bi-box-arrow-left me-1"></i>Sign out
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════ MAIN ══════════════════ -->
+  <div class="main-content">
+
+    <!-- Top Header -->
+    <header class="top-header">
+      <button class="btn-hamburger" id="hamburger" aria-label="Menu">
+        <i class="bi bi-list"></i>
+      </button>
+      <span class="header-title">{% block page_title %}{% endblock %}</span>
+      <div class="header-actions">
+        {% block header_actions %}{% endblock %}
+      </div>
+    </header>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div style="padding: .75rem 2rem 0;">
+      {% for m in messages %}
+      <div class="alert alert-{{ m.tags }} alert-dismissible d-flex align-items-center gap-2" role="alert">
+        <i class="bi bi-{% if m.tags == 'success' %}check-circle{% elif m.tags == 'danger' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+        {{ m }}
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Page Content -->
+    <main class="page-content">
+      {% block content %}{% endblock %}
+    </main>
+
+  </div><!-- /main-content -->
+</div><!-- /app-wrapper -->
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'pharmacy/js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,61 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}{{ title }} — PharmaFlow{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7 col-xl-6">
+    <div class="form-card card">
+      <div class="card-header">
+        <h5><i class="bi bi-capsule me-2"></i>{{ title }}</h5>
+      </div>
+      <div class="card-body">
+        <form method="POST" novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger mb-3">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Medicine Name *</label>
+              {{ form.name }}
+              {% if form.name.errors %}<div class="text-danger mt-1" style="font-size:.8rem;">{{ form.name.errors|join:", " }}</div>{% endif %}
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Category *</label>
+              {{ form.category }}
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label">Supplier</label>
+              {{ form.supplier }}
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label">Stock *</label>
+              {{ form.stock }}
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label">Price ($) *</label>
+              {{ form.price }}
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label">Expiry Date *</label>
+              {{ form.expiry_date }}
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg me-1"></i>{{ action }}
+            </button>
+            <a href="{% if med %}{% url 'medicine_detail' med.pk %}{% else %}{% url 'medicine_list' %}{% endif %}"
+               class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

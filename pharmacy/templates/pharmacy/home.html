@@ -1,0 +1,169 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Dashboard — PharmaFlow{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- ── Stat Cards ─────────────────────────────────────────────── -->
+<div class="stat-cards mb-4">
+
+  <div class="stat-card teal">
+    <div class="stat-icon"><i class="bi bi-capsule"></i></div>
+    <div class="stat-value">{{ total_medicines }}</div>
+    <div class="stat-label">Total Medicines</div>
+    <div class="stat-sub">{{ out_of_stock.count }} out of stock</div>
+  </div>
+
+  <div class="stat-card navy">
+    <div class="stat-icon"><i class="bi bi-building"></i></div>
+    <div class="stat-value">{{ total_suppliers }}</div>
+    <div class="stat-label">Suppliers</div>
+    <div class="stat-sub">Active network</div>
+  </div>
+
+  <div class="stat-card amber">
+    <div class="stat-icon"><i class="bi bi-people"></i></div>
+    <div class="stat-value">{{ total_customers }}</div>
+    <div class="stat-label">Customers</div>
+    <div class="stat-sub">Registered patients</div>
+  </div>
+
+  <div class="stat-card rose">
+    <div class="stat-icon"><i class="bi bi-receipt"></i></div>
+    <div class="stat-value">{{ total_sales }}</div>
+    <div class="stat-label">Total Sales</div>
+    <div class="stat-sub">${{ revenue_total|floatformat:2 }} revenue</div>
+  </div>
+
+</div>
+
+<!-- ── Alert Panels ───────────────────────────────────────────── -->
+{% if expired or low_stock or out_of_stock %}
+<div class="row g-3 mb-4">
+
+  {% if expired %}
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header" style="background:#fff1f3; border-color:#fecdd3;">
+        <span style="font-size:.85rem; font-weight:600; color:#9f1239;">
+          <i class="bi bi-calendar-x me-2"></i>Expired Medicines
+        </span>
+        <span class="badge badge-out">{{ expired.count }}</span>
+      </div>
+      <ul class="list-group list-group-flush" style="max-height:200px; overflow-y:auto;">
+        {% for m in expired %}
+        <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3" style="font-size:.82rem;">
+          <a href="{% url 'medicine_detail' m.pk %}" class="text-decoration-none text-dark fw-500">{{ m.name }}</a>
+          <span style="color:var(--rose); font-size:.75rem;">{{ m.expiry_date }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if low_stock %}
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header" style="background:#fffbeb; border-color:#fde68a;">
+        <span style="font-size:.85rem; font-weight:600; color:#92400e;">
+          <i class="bi bi-exclamation-triangle me-2"></i>Low Stock
+        </span>
+        <span class="badge badge-low">{{ low_stock.count }}</span>
+      </div>
+      <ul class="list-group list-group-flush" style="max-height:200px; overflow-y:auto;">
+        {% for m in low_stock %}
+        <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3" style="font-size:.82rem;">
+          <a href="{% url 'medicine_detail' m.pk %}" class="text-decoration-none text-dark fw-500">{{ m.name }}</a>
+          <span style="color:var(--amber); font-size:.75rem;">{{ m.stock }} left</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if out_of_stock %}
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header" style="background:#f8fafc; border-color:var(--border);">
+        <span style="font-size:.85rem; font-weight:600; color:var(--slate);">
+          <i class="bi bi-archive me-2"></i>Out of Stock
+        </span>
+        <span class="badge badge-out">{{ out_of_stock.count }}</span>
+      </div>
+      <ul class="list-group list-group-flush" style="max-height:200px; overflow-y:auto;">
+        {% for m in out_of_stock %}
+        <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3" style="font-size:.82rem;">
+          <a href="{% url 'medicine_detail' m.pk %}" class="text-decoration-none text-dark fw-500">{{ m.name }}</a>
+          <span class="badge badge-out">None</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endif %}
+
+<!-- ── Recent Activity ─────────────────────────────────────────── -->
+<div class="row g-3">
+
+  <!-- Recent Sales -->
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <span style="font-weight:600; font-size:.9rem;"><i class="bi bi-receipt me-2 text-teal"></i>Recent Sales</span>
+        <a href="{% url 'sale_list' %}" class="btn btn-outline-primary btn-sm">View all</a>
+      </div>
+      {% if recent_sales %}
+      <table class="table mb-0">
+        <thead><tr><th>Medicine</th><th>Customer</th><th>Qty</th><th>Total</th></tr></thead>
+        <tbody>
+          {% for s in recent_sales %}
+          <tr>
+            <td class="fw-500">{{ s.medicine.name|truncatechars:22 }}</td>
+            <td style="color:var(--slate);">{{ s.customer.name|default:"—"|truncatechars:18 }}</td>
+            <td>{{ s.quantity }}</td>
+            <td>${{ s.total_price }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state"><div class="empty-icon"><i class="bi bi-receipt"></i></div><p>No sales recorded yet.</p></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent Purchases -->
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <span style="font-weight:600; font-size:.9rem;"><i class="bi bi-box-arrow-in-down-right me-2" style="color:var(--navy-light);"></i>Recent Purchases</span>
+        <a href="{% url 'purchase_list' %}" class="btn btn-outline-primary btn-sm">View all</a>
+      </div>
+      {% if recent_purchases %}
+      <table class="table mb-0">
+        <thead><tr><th>Medicine</th><th>Supplier</th><th>Qty</th><th>Total</th></tr></thead>
+        <tbody>
+          {% for p in recent_purchases %}
+          <tr>
+            <td class="fw-500">{{ p.medicine.name|truncatechars:22 }}</td>
+            <td style="color:var(--slate);">{{ p.supplier.name|default:"—"|truncatechars:18 }}</td>
+            <td>{{ p.quantity }}</td>
+            <td>${{ p.total_price }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state"><div class="empty-icon"><i class="bi bi-box"></i></div><p>No purchases recorded yet.</p></div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Suppliers — PharmaFlow{% endblock %}
+{% block page_title %}Suppliers{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'supplier_add' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Add Supplier</a>
+{% endblock %}
+
+{% block content %}
+<!-- Search -->
+<form method="GET" class="mb-3 d-flex gap-2" style="max-width:360px;">
+  <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search suppliers…">
+  <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+  {% if q %}<a href="{% url 'supplier_list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x"></i></a>{% endif %}
+</form>
+
+<div class="table-wrapper">
+  <div class="card-header">
+    <span style="font-weight:600;">{{ suppliers.count }} supplier{{ suppliers.count|pluralize }}</span>
+  </div>
+  {% if suppliers %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Medicines</th><th>Since</th><th style="text-align:right;">Actions</th></tr></thead>
+      <tbody>
+        {% for s in suppliers %}
+        <tr>
+          <td class="fw-500">{{ s.name }}</td>
+          <td style="color:var(--slate);">{{ s.phone|default:"—" }}</td>
+          <td style="color:var(--slate);">{{ s.email|default:"—" }}</td>
+          <td><span class="badge badge-teal">{{ s.med_count }}</span></td>
+          <td style="color:var(--muted);">{{ s.created|date:"M Y" }}</td>
+          <td style="text-align:right;">
+            <div class="d-flex gap-1 justify-content-end">
+              <a href="{% url 'supplier_edit'   s.pk %}" class="action-btn action-edit"   data-tooltip="Edit"><i class="bi bi-pencil"></i></a>
+              <a href="{% url 'supplier_delete' s.pk %}" class="action-btn action-delete" data-tooltip="Delete"><i class="bi bi-trash"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon"><i class="bi bi-building"></i></div>
+    <p>No suppliers yet. <a href="{% url 'supplier_add' %}">Add your first one.</a></p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

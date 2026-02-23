@@ -1,0 +1,54 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Sales — PharmaFlow{% endblock %}
+{% block page_title %}Sales{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'sale_add' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Record Sale</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-wrapper">
+  <div class="card-header">
+    <span style="font-weight:600;">{{ sales.count }} sale{{ sales.count|pluralize }}</span>
+    <span style="font-size:.875rem; color:var(--slate);">
+      Total revenue: <strong style="color:var(--teal);">${{ total|floatformat:2 }}</strong>
+    </span>
+  </div>
+  {% if sales %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Medicine</th><th>Customer</th>
+          <th>Qty</th><th>Total ($)</th><th>Date</th><th>Notes</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in sales %}
+        <tr>
+          <td style="color:var(--muted);">#{{ s.pk }}</td>
+          <td class="fw-500">{{ s.medicine.name }}</td>
+          <td style="color:var(--slate);">{{ s.customer.name|default:"—" }}</td>
+          <td>{{ s.quantity }}</td>
+          <td style="color:var(--teal); font-weight:500;">${{ s.total_price }}</td>
+          <td style="color:var(--slate);">{{ s.sale_date }}</td>
+          <td style="color:var(--muted); font-size:.82rem;">{{ s.notes|truncatechars:30|default:"—" }}</td>
+          <td style="text-align:right;">
+            <a href="{% url 'sale_delete' s.pk %}" class="action-btn action-delete" data-tooltip="Delete">
+              <i class="bi bi-trash"></i>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon"><i class="bi bi-receipt"></i></div>
+    <p>No sales recorded. <a href="{% url 'sale_add' %}">Record your first sale.</a></p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

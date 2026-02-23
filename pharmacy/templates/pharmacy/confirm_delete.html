@@ -1,0 +1,37 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Delete {{ type }} — PharmaFlow{% endblock %}
+{% block page_title %}Delete {{ type }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-sm-8 col-md-6 col-lg-5">
+    <div class="card" style="border-color:#fecdd3;">
+      <div class="card-header" style="background:#fff1f3; border-color:#fecdd3;">
+        <h5 style="color:var(--rose); font-family:var(--font-body); font-weight:600; margin:0;">
+          <i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion
+        </h5>
+      </div>
+      <div class="card-body text-center py-4">
+        <div style="font-size:3.5rem; margin-bottom:1rem; color:var(--rose); opacity:.7;">
+          <i class="bi bi-trash3"></i>
+        </div>
+        <h5 style="color:var(--navy); font-family:var(--font-head);">Delete {{ type }}</h5>
+        <p style="color:var(--slate); font-size:.9rem; margin-bottom:1.5rem;">
+          Are you sure you want to permanently delete<br>
+          <strong>"{{ object }}"</strong>?<br>
+          <small style="color:var(--muted);">This action cannot be undone.</small>
+        </p>
+        <form method="POST">
+          {% csrf_token %}
+          <div class="d-flex gap-2 justify-content-center">
+            <a href="{{ cancel_url }}" class="btn btn-outline-secondary px-4">Cancel</a>
+            <button type="submit" class="btn btn-danger px-4">
+              <i class="bi bi-trash me-1"></i>Yes, Delete
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

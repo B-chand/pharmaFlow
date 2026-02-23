@@ -1,0 +1,137 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}{{ med.name }} — PharmaFlow{% endblock %}
+{% block page_title %}Medicine Detail{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'medicine_edit' med.pk %}" class="btn btn-primary btn-sm">
+    <i class="bi bi-pencil"></i> Edit
+  </a>
+  <a href="{% url 'medicine_delete' med.pk %}" class="btn btn-outline-danger btn-sm">
+    <i class="bi bi-trash"></i> Delete
+  </a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+
+  <!-- Medicine Info -->
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header" style="background:var(--navy); border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+        <h5 style="color:#fff; font-family:var(--font-head); font-weight:400; margin:0;">{{ med.name }}</h5>
+      </div>
+      <div class="card-body">
+
+        <div style="margin-bottom:1.25rem;">
+          {% if med.is_expired %}
+            <span class="badge badge-expired fs-6"><i class="bi bi-x-circle me-1"></i>Expired</span>
+          {% elif med.is_out_of_stock %}
+            <span class="badge badge-out">Out of Stock</span>
+          {% elif med.is_low_stock %}
+            <span class="badge badge-low"><i class="bi bi-exclamation-circle me-1"></i>Low Stock</span>
+          {% else %}
+            <span class="badge badge-ok"><i class="bi bi-check-circle me-1"></i>In Stock</span>
+          {% endif %}
+        </div>
+
+        {% for label, value in detail_pairs %}
+        <div class="detail-pair">
+          <span class="detail-key">{{ label }}</span>
+          <span>{{ value }}</span>
+        </div>
+        {% endfor %}
+
+        <div class="detail-pair">
+          <span class="detail-key">Category</span>
+          <span><span class="badge badge-navy">{{ med.get_category_display }}</span></span>
+        </div>
+        <div class="detail-pair">
+          <span class="detail-key">Stock</span>
+          <span class="fw-500" style="font-size:1.1rem;">{{ med.stock }}</span>
+        </div>
+        <div class="detail-pair">
+          <span class="detail-key">Price</span>
+          <span class="fw-500">${{ med.price }}</span>
+        </div>
+        <div class="detail-pair">
+          <span class="detail-key">Expiry Date</span>
+          <span style="color:{% if med.is_expired %}var(--rose){% else %}inherit{% endif %};">{{ med.expiry_date }}</span>
+        </div>
+        <div class="detail-pair">
+          <span class="detail-key">Supplier</span>
+          <span>{{ med.supplier.name|default:"—" }}</span>
+        </div>
+        <div class="detail-pair">
+          <span class="detail-key">Added</span>
+          <span style="color:var(--muted);">{{ med.created|date:"N j, Y" }}</span>
+        </div>
+        <div class="detail-pair">
+          <span class="detail-key">Updated</span>
+          <span style="color:var(--muted);">{{ med.updated|date:"N j, Y" }}</span>
+        </div>
+
+        <div class="divider"></div>
+        <div class="d-flex gap-2">
+          <a href="{% url 'medicine_edit' med.pk %}" class="btn btn-primary btn-sm">Edit</a>
+          <a href="{% url 'medicine_list' %}" class="btn btn-outline-secondary btn-sm">← Back</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="col-lg-7">
+
+    <!-- Recent Sales -->
+    <div class="card mb-3">
+      <div class="card-header">
+        <span style="font-weight:600; font-size:.88rem;"><i class="bi bi-receipt me-2 text-teal"></i>Recent Sales</span>
+        <a href="{% url 'sale_add' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-lg"></i> New Sale</a>
+      </div>
+      {% if recent_sales %}
+      <table class="table mb-0">
+        <thead><tr><th>Date</th><th>Customer</th><th>Qty</th><th>Total</th></tr></thead>
+        <tbody>
+          {% for s in recent_sales %}
+          <tr>
+            <td style="color:var(--slate);">{{ s.sale_date }}</td>
+            <td>{{ s.customer.name|default:"—" }}</td>
+            <td>{{ s.quantity }}</td>
+            <td>${{ s.total_price }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state py-3"><p>No sales for this medicine yet.</p></div>
+      {% endif %}
+    </div>
+
+    <!-- Recent Purchases -->
+    <div class="card">
+      <div class="card-header">
+        <span style="font-weight:600; font-size:.88rem;"><i class="bi bi-box-arrow-in-down-right me-2" style="color:var(--navy-light);"></i>Recent Purchases</span>
+        <a href="{% url 'purchase_add' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-lg"></i> New Purchase</a>
+      </div>
+      {% if recent_purchases %}
+      <table class="table mb-0">
+        <thead><tr><th>Date</th><th>Supplier</th><th>Qty</th><th>Total</th></tr></thead>
+        <tbody>
+          {% for p in recent_purchases %}
+          <tr>
+            <td style="color:var(--slate);">{{ p.purchase_date }}</td>
+            <td>{{ p.supplier.name|default:"—" }}</td>
+            <td>{{ p.quantity }}</td>
+            <td>${{ p.total_price }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state py-3"><p>No purchases for this medicine yet.</p></div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

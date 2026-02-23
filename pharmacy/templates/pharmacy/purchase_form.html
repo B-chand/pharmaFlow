@@ -1,0 +1,86 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}{{ title }} — PharmaFlow{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7 col-xl-6">
+    <div class="form-card card">
+      <div class="card-header">
+        <h5><i class="bi bi-box-arrow-in-down-right me-2"></i>{{ title }}</h5>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-info mb-3" style="font-size:.85rem;">
+          <i class="bi bi-info-circle me-2"></i>
+          Stock will be <strong>increased</strong> automatically when a purchase is saved.
+        </div>
+        <form method="POST" novalidate>
+          {% csrf_token %}
+          {% if form.non_field_errors %}<div class="alert alert-danger mb-3">{{ form.non_field_errors }}</div>{% endif %}
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-7">
+              <label class="form-label">Medicine *</label>
+              {{ form.medicine }}
+            </div>
+            <div class="col-sm-5">
+              <label class="form-label">Supplier</label>
+              {{ form.supplier }}
+            </div>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-sm-4">
+              <label class="form-label">Quantity *</label>
+              {{ form.quantity }}
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label">Total Price ($) *</label>
+              {{ form.total_price }}
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label">Purchase Date *</label>
+              {{ form.purchase_date }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            {{ form.notes }}
+          </div>
+          <div class="divider"></div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>{{ action }}</button>
+            <a href="{% url 'purchase_list' %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-calculate total price from medicine unit price × quantity
+document.addEventListener('DOMContentLoaded', () => {
+  const medSelect = document.getElementById('id_medicine');
+  const qtyInput  = document.getElementById('id_quantity');
+  const totalInput= document.getElementById('id_total_price');
+
+  // Build a price map from medicine options
+  const prices = {};
+  {% for m in form.fields.medicine.queryset %}
+  prices[{{ m.pk }}] = {{ m.price }};
+  {% endfor %}
+
+  function recalc() {
+    const medId = parseInt(medSelect.value);
+    const qty   = parseInt(qtyInput.value) || 1;
+    if (prices[medId]) {
+      totalInput.value = (prices[medId] * qty).toFixed(2);
+    }
+  }
+  medSelect?.addEventListener('change', recalc);
+  qtyInput?.addEventListener('input',  recalc);
+});
+</script>
+{% endblock %}

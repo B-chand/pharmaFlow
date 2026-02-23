@@ -1,0 +1,54 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Purchases — PharmaFlow{% endblock %}
+{% block page_title %}Purchases{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'purchase_add' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Record Purchase</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-wrapper">
+  <div class="card-header">
+    <span style="font-weight:600;">{{ purchases.count }} purchase{{ purchases.count|pluralize }}</span>
+    <span style="font-size:.875rem; color:var(--slate);">
+      Total spend: <strong>${{ total|floatformat:2 }}</strong>
+    </span>
+  </div>
+  {% if purchases %}
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Medicine</th><th>Supplier</th>
+          <th>Qty</th><th>Total ($)</th><th>Date</th><th>Notes</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in purchases %}
+        <tr>
+          <td style="color:var(--muted);">#{{ p.pk }}</td>
+          <td class="fw-500">{{ p.medicine.name }}</td>
+          <td style="color:var(--slate);">{{ p.supplier.name|default:"—" }}</td>
+          <td>{{ p.quantity }}</td>
+          <td>${{ p.total_price }}</td>
+          <td style="color:var(--slate);">{{ p.purchase_date }}</td>
+          <td style="color:var(--muted); font-size:.82rem;">{{ p.notes|truncatechars:30|default:"—" }}</td>
+          <td style="text-align:right;">
+            <a href="{% url 'purchase_delete' p.pk %}" class="action-btn action-delete" data-tooltip="Delete">
+              <i class="bi bi-trash"></i>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon"><i class="bi bi-box-arrow-in-down-right"></i></div>
+    <p>No purchases yet. <a href="{% url 'purchase_add' %}">Record your first purchase.</a></p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

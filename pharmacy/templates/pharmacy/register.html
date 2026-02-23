@@ -1,0 +1,14 @@
+{% extends 'pharmacy/base.html' %}
+{% block content %}
+<div class="container mt-5" style="max-width:500px;">
+  <h2 class="mb-4 text-center">Create Account</h2>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-teal w-100 mt-3">Create Account</button>
+  </form>
+  <div class="mt-3 text-center">
+    <a href="{% url 'login' %}" class="text-muted">Already have an account? Sign in</a>
+  </div>
+</div>
+{% endblock %}
