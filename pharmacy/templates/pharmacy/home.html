@@ -32,7 +32,7 @@
     <div class="stat-icon"><i class="bi bi-receipt"></i></div>
     <div class="stat-value">{{ total_sales }}</div>
     <div class="stat-label">Total Sales</div>
-    <div class="stat-sub">${{ revenue_total|floatformat:2 }} revenue</div>
+    <div class="stat-sub">Rs {{ revenue_total|floatformat:2 }} revenue</div>
   </div>
 
 </div>
@@ -126,7 +126,7 @@
             <td class="fw-500">{{ s.medicine.name|truncatechars:22 }}</td>
             <td style="color:var(--slate);">{{ s.customer.name|default:"—"|truncatechars:18 }}</td>
             <td>{{ s.quantity }}</td>
-            <td>${{ s.total_price }}</td>
+              <td>Rs {{ s.total_price }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -153,7 +153,7 @@
             <td class="fw-500">{{ p.medicine.name|truncatechars:22 }}</td>
             <td style="color:var(--slate);">{{ p.supplier.name|default:"—"|truncatechars:18 }}</td>
             <td>{{ p.quantity }}</td>
-            <td>${{ p.total_price }}</td>
+              <td>Rs {{ p.total_price }}</td>
           </tr>
           {% endfor %}
         </tbody>

@@ -65,7 +65,7 @@
           <th>Name</th>
           <th>Category</th>
           <th>Stock</th>
-          <th>Price</th>
+          <th>Price (Rs)</th>
           <th>Expiry</th>
           <th>Supplier</th>
           <th>Status</th>
@@ -82,7 +82,7 @@
           </td>
           <td><span class="badge badge-navy">{{ m.get_category_display }}</span></td>
           <td>{{ m.stock }}</td>
-          <td>${{ m.price }}</td>
+          <td>Rs {{ m.price }}</td>
           <td>
             {{ m.expiry_date }}
             {% if m.is_expired %}

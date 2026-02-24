@@ -51,7 +51,7 @@
         </div>
         <div class="detail-pair">
           <span class="detail-key">Price</span>
-          <span class="fw-500">${{ med.price }}</span>
+          <span class="fw-500">Rs {{ med.price }}</span>
         </div>
         <div class="detail-pair">
           <span class="detail-key">Expiry Date</span>
@@ -97,7 +97,7 @@
             <td style="color:var(--slate);">{{ s.sale_date }}</td>
             <td>{{ s.customer.name|default:"—" }}</td>
             <td>{{ s.quantity }}</td>
-            <td>${{ s.total_price }}</td>
+            <td>Rs {{ s.total_price }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -122,7 +122,7 @@
             <td style="color:var(--slate);">{{ p.purchase_date }}</td>
             <td>{{ p.supplier.name|default:"—" }}</td>
             <td>{{ p.quantity }}</td>
-            <td>${{ p.total_price }}</td>
+            <td>Rs {{ p.total_price }}</td>
           </tr>
           {% endfor %}
         </tbody>
